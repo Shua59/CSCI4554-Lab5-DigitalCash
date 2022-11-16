@@ -4,8 +4,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Random;
-import java.util.function.Function;
 
 public class ChunkBuilder {
     private MessageDigest fHash;
@@ -13,6 +11,7 @@ public class ChunkBuilder {
 
     private SecureRandom seedGen = new SecureRandom();
 
+    private SecureRandom billNumberGenerator = new SecureRandom(seedGen.generateSeed(8));
     private SecureRandom aKey = new SecureRandom(seedGen.generateSeed(8));
     private SecureRandom cKey = new SecureRandom(seedGen.generateSeed(8));
     private SecureRandom dKey = new SecureRandom(seedGen.generateSeed(8));
@@ -34,10 +33,29 @@ public class ChunkBuilder {
         //the two numbers.
         BigInteger messageMask = new BigInteger(bank.getCustomerNumber() + billNumber, bank.getRadix());
 
+        byte[] secretX = gHash.digest(concatenateArrays(secureA.toByteArray(), secureC.toByteArray()));
+        byte[] secretY = gHash.digest(concatenateArrays(messageMask.xor(secureA).toByteArray(), secureD.toByteArray()));
+        byte[] finalHash = fHash.digest(concatenateArrays(secretX, secretY));
+        
+        return new Chunk(secureA, secureC, secureD, messageMask, secretX, secretY, finalHash);
+    }
 
+    public Chunk genChunk(){
+        return genChunk(new BigInteger(billNumberGenerator, ));
+    }
 
-
-        byte secretX = fHash
+    private byte[] concatenateArrays(byte[] a, byte[] b){
+        byte[] output = new byte[a.length + b.length];
+        int position = 0;
+        for(int i = 0; i < a.length; i++){
+            output[position] = a[i];
+            position++;
+        }
+        for(int j = 0; j < b.length; j++){
+            output[position] = b[j];
+            position++;
+        }
+        return output;
     }
 
 }
