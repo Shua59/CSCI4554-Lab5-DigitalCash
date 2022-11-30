@@ -57,6 +57,20 @@ public class Chunk {
         return openHalfAsString(true) + openHalfAsString(false);
     }
 
+    //make lying version & hope that we can lie about what's in the boxes?  Or that it isn't checked right?
+    //make "bad" chunks and send those (i.e. chunks that don't have our account number; it could have anything)
+    //and lie about what's in them when the bank asks to see and sign them
+
+    //We generate genuine bill
+    //We give genuine bill to someone else for a genuine transaction.
+    //They ask for proof to unblind the chunks correctly.
+    //We unblind the relevant halves & have a bill "ready to spend"
+    //Before actually giving them that bill, "we"/coconspirator cashes exactly that
+    //give the now-spent bill
+    //It looks like the other party is trying to cash a bill that's already been cashed, as though *they're* cheating
+
+
+
     public BigInteger[] openHalf(int half){
         if (half == 1){
             BigInteger[] output = {secureA, secureC, new BigInteger(secretY)};
@@ -65,6 +79,11 @@ public class Chunk {
             BigInteger[] output = {aXor, secureD, new BigInteger(secretX)};
             return output;
         }
-    }        
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(finalHash);
+    }
    
 }

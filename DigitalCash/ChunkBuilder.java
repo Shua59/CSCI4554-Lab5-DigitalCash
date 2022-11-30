@@ -41,7 +41,7 @@ public class ChunkBuilder {
     }
 
     public Chunk genChunk(){
-        return genChunk(new BigInteger(billNumberGenerator, ));
+        return genChunk(new BigInteger(128, billNumberGenerator));
     }
 
     private byte[] concatenateArrays(byte[] a, byte[] b){
