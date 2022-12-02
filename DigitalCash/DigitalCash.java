@@ -2,12 +2,13 @@ package DigitalCash;
 
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class DigitalCash {
     
     private String customerNumber;
-    final int NUM_CHUNKS = 10;
-    final int EXTRA_CHUNKS = 10; //generated to unblind for the bank
+    static final int NUM_CHUNKS = 10;
+    static final int EXTRA_CHUNKS = 10; //generated to unblind for the bank
 
     //assuming communication Just Works
 
@@ -26,8 +27,11 @@ public class DigitalCash {
         }
     }
 
-    private static Chunk[] generateBill(ChunkBuilder b) {
-        Chunk[] output = new Chunk[NUM_CHUNKS + EXTRA_CHUNKS]();
+    public static BigInteger[][] openBill(Chunk[] bill, String halves){
+        int[] halvesArray = Arrays.stream(halves.split("")).mapToInt(Integer::parseInt).toArray();
+        BigInteger[][] output = new BigInteger[bill.length][3];
+        Arrays.setAll(output, (int x) -> bill[x].openHalf(halvesArray[x]));
+        return output;
     }
 
 }

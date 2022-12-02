@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 public class ChunkBuilder {
     private MessageDigest fHash;
@@ -24,6 +25,8 @@ public class ChunkBuilder {
         gHash = MessageDigest.getInstance(hashGName);
     }
 
+
+
     public Chunk genChunk(BigInteger billNumber){
         BigInteger secureA = new BigInteger(128, aKey);
         BigInteger secureC = new BigInteger(128, cKey);
@@ -42,6 +45,13 @@ public class ChunkBuilder {
 
     public Chunk genChunk(){
         return genChunk(new BigInteger(128, billNumberGenerator));
+    }
+
+    public Chunk[] generateBill(int billSize) {
+        Chunk[] output = new Chunk[billSize];
+        BigInteger billNum = new BigInteger(128, billNumberGenerator);
+        Arrays.setAll(output, (x) -> genChunk(billNum));
+        return output;
     }
 
     private byte[] concatenateArrays(byte[] a, byte[] b){
