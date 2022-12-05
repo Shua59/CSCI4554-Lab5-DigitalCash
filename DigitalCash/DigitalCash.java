@@ -2,6 +2,7 @@ package DigitalCash;
 
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.util.Arrays;
 
 public class DigitalCash {
@@ -19,11 +20,23 @@ public class DigitalCash {
             new BigInteger("7"),
             10);
         
+
+        //System.out.println(Arrays.toString(Security.getProviders()));
+
         try {
             ChunkBuilder b1Builder = new ChunkBuilder("SHA-256", "SHA-256", b1);
+            Bill newBill = Bill.from(b1Builder, BigInteger.valueOf(5), NUM_CHUNKS);
+            System.out.println(newBill);
+            Object[] billContents = Arrays.stream(newBill.open(args[0]))
+                                    .map(x -> Arrays.toString(x))
+                                    .toArray();
+            System.out.println(Arrays.toString(billContents));
         } catch (NoSuchAlgorithmException noae) {
-            System.err.println("Error generating ChunkBuilders: ");
+            System.err.println("Error generating ChunkBuilder: ");
             System.err.println(noae);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("No command line argument given, provide the halves to be opened as a command line argument: ");
+            System.err.println(e);
         }
     }
 

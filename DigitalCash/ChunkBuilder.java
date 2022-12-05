@@ -10,12 +10,12 @@ public class ChunkBuilder {
     private MessageDigest fHash;
     private MessageDigest gHash;
 
-    private SecureRandom seedGen = new SecureRandom();
+    //private SecureRandom seedGen = new SecureRandom();
 
-    private SecureRandom billNumberGenerator = new SecureRandom(seedGen.generateSeed(8));
-    private SecureRandom aKey = new SecureRandom(seedGen.generateSeed(8));
-    private SecureRandom cKey = new SecureRandom(seedGen.generateSeed(8));
-    private SecureRandom dKey = new SecureRandom(seedGen.generateSeed(8));
+    private SecureRandom billNumberGenerator = new SecureRandom(BigInteger.valueOf(1).toByteArray());
+    private SecureRandom aKey = new SecureRandom(BigInteger.valueOf(2).toByteArray());
+    private SecureRandom cKey = new SecureRandom(BigInteger.valueOf(3).toByteArray());
+    private SecureRandom dKey = new SecureRandom(BigInteger.valueOf(4).toByteArray());
 
     private Bank bank;
 
@@ -23,6 +23,7 @@ public class ChunkBuilder {
     public ChunkBuilder(String hashFName, String hashGName, Bank bank) throws NoSuchAlgorithmException{
         fHash = MessageDigest.getInstance(hashFName);
         gHash = MessageDigest.getInstance(hashGName);
+        this.bank = bank;
     }
 
 
@@ -47,12 +48,16 @@ public class ChunkBuilder {
         return genChunk(new BigInteger(128, billNumberGenerator));
     }
 
-    public Chunk[] generateBill(int billSize) {
+    public Chunk[] generateBill(int billSize, BigInteger billNum) {
         Chunk[] output = new Chunk[billSize];
-        BigInteger billNum = new BigInteger(128, billNumberGenerator);
         Arrays.setAll(output, (x) -> genChunk(billNum));
         return output;
     }
+
+    public Chunk[] generateBill(int billSize){
+        return generateBill(billSize, new BigInteger(128, billNumberGenerator));
+    }
+
 
     private byte[] concatenateArrays(byte[] a, byte[] b){
         byte[] output = new byte[a.length + b.length];
