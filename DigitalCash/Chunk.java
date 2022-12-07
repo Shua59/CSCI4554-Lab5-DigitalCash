@@ -15,6 +15,8 @@ public class Chunk {
 
     private byte[] finalHash;
 
+    public BigInteger randomR = 0;
+
     public Chunk(BigInteger secureA, BigInteger secureC, BigInteger secureD, BigInteger aXor, byte[] secretX, byte[] secretY, byte[] finalHash){
         
         this.secureA = secureA;
@@ -30,6 +32,11 @@ public class Chunk {
 
     public byte[] getFinalHash(){
         return finalHash;
+    }
+
+    public BigInteger maskBy(BigInteger r, BigInteger bankExponent, BigInteger bankModulo){
+        this.randomR = r;
+        return r.modPow(bankExponent, bankModulo).multiply(new BigInteger(finalHash));
     }
 
     public String openHalfAsString(Boolean half){
@@ -55,6 +62,20 @@ public class Chunk {
 
     public String openAllAsString(){
         return openHalfAsString(true) + openHalfAsString(false);
+    }
+
+    public StringBuilder openForBank(){
+        StringBuilder outputBuilder = new StringBuilder();
+        outputBuilder.append("a is ");
+        outputBuilder.append(secureA);
+        outputBuilder.append("\nc is ");
+        outputBuilder.append(secureC);
+        outputBuilder.append("\nd is ");
+        outputBuilder.append(secureD);
+        outputBuilder.append("\nr is ");
+        outputBuilder.append(randomR); //replace with actual value of r
+        outputBuilder.append("\n");
+        return outputBuilder;
     }
 
     //make lying version & hope that we can lie about what's in the boxes?  Or that it isn't checked right?
